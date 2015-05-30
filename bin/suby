@@ -1,9 +1,13 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/suby'
+$LOAD_PATH.unshift('./lib')
+
+
+require 'suby'
 require 'optparse'
 
-options = {}
+options = { :lang => 'fr'}
+
 option_parser = OptionParser.new do |opts|
   opts.banner = "#{File.basename $0} [options] video"
   opts.separator '  Find and download subtitles for the given video file'
