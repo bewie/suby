@@ -29,17 +29,24 @@ module Suby
     LANG_MAPPING.default = 'all'
 
     def download_url
-      SEARCH_QUERIES_ORDER.find(lambda { raise NotFoundError, "no subtitles available" }) { |type|
-        if subs = search_subtitles(search_query(type))['data']
+      SEARCH_QUERIES_ORDER.find(lambda { raise NotFoundError, "no subtitles available" }) do |type|
+        puts if $verbose
+        hash_info = search_subtitles(search_query(type))
+        #puts ">> hash_info: #{hash_info}"
+        if hash_info['data'].length != 0 and hash_info['data'].first['SubDownloadLink'] 
+          puts ">>>Find it on #{type}" if $verbose
           @type = type
-          break subs
+          return hash_info['data'].first['SubDownloadLink'] 
+        else
+          puts "<<< Not found by #{type}"
         end
-      }.first['SubDownloadLink']
+      end
     end
 
     def search_subtitles(query)
       return {} unless query
       query = [query] unless query.kind_of? Array
+      #puts ">>>token/query: #{token} / #{query}"
       xmlrpc.call('SearchSubtitles', token, query)
     end
 
@@ -58,10 +65,14 @@ module Suby
 
     def search_query(type = :hash)
       return nil unless query = send("search_query_by_#{type}")
+      #t = query.merge(sublanguageid: language(lang))
+      #puts ">>> search_query_by_#{type} | #{lang} | " +  t.to_s
       query.merge(sublanguageid: language(lang))
     end
 
     def search_query_by_hash
+      puts "hash: #{MovieHasher.compute_hash(file)}" if $verbose
+      puts "size: #{file.size.to_s}" if $verbose
       { moviehash: MovieHasher.compute_hash(file), moviebytesize: file.size.to_s } if file.exist?
     end
 

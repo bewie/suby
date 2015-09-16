@@ -6,7 +6,7 @@ $LOAD_PATH.unshift('./lib')
 require 'suby'
 require 'optparse'
 
-options = { :lang => 'fr'}
+options = { :lang => 'fr', :verbose => false}
 
 option_parser = OptionParser.new do |opts|
   opts.banner = "#{File.basename $0} [options] video"
@@ -19,6 +19,10 @@ option_parser = OptionParser.new do |opts|
 
   opts.on '-f', '--force', 'Force subtitles download even if already exists' do |lang|
     options[:force] = true
+  end
+
+  opts.on '-v', '--verbose', 'Verbose mode' do |lang|
+    options[:verbose] = true
   end
 
   opts.on '-h', '--help', 'Show usage' do

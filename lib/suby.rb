@@ -18,6 +18,7 @@ module Suby
 
     def download_subtitles(files, options = {})
       Zip.on_exists_proc = options[:force]
+      $verbose = options[:verbose]
       files.each { |file|
         file = Path(file)
         if file.dir?

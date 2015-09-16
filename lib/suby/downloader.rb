@@ -18,8 +18,10 @@ module Suby
       @file = file
       @lang = (args.last || 'en').to_sym
       @video_data = FilenameParser.parse(file)
+      puts ">> #{video_data[:type]}" if $verbose
       if video_data[:type] == :tvshow
         @show, @season, @episode = video_data.values_at(:show, :season, :episode)
+        puts ">> #{@show}/#{@season}/#{@episode}" if $verbose
       end
     end
 
@@ -97,6 +99,7 @@ module Suby
     end
 
     def extract(url_or_response)
+      puts "extrac #{url_or_response}" if $verbose
       contents = subtitles(url_or_response)
       http.finish
       format = self.class::FORMAT
